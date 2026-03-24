@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.venv/
+
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/build/
+mobile/ios/
+mobile/android/.gradle/
+mobile/android/app/build/
+mobile/.idea/
+mobile/.metadata
+mobile/pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
