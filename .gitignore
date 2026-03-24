@@ -1,12 +1,11 @@
 # Python
-__pycache__/
-*.py[cod]
-*$py.class
 venv/
+__pycache__/
+*.pyc
 .env
 .venv/
 
-# Flutter / Dart
+# Flutter
 mobile/.dart_tool/
 mobile/build/
 mobile/ios/
@@ -18,9 +17,7 @@ mobile/pubspec.lock
 
 # IDE
 .idea/
-.vscode/
 *.iml
 
 # OS
 .DS_Store
-Thumbs.db
