@@ -1,39 +1,43 @@
-from sqlalchemy import Column, Integer, String, DateTime, JSON, Boolean, Text, Float
-from sqlalchemy.sql import func
-from database import Base
-from datetime import datetime
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    JSON,
+    DateTime,
+    ForeignKey,
+    Boolean
+)
 
+from sqlalchemy.sql import func
+
+from app.database import Base
 
 class User(Base):
+
     __tablename__ = "users"
 
-    # Основные поля
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    username = Column(String(100), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
 
-    # Данные пользователя
-    full_name = Column(String(200), nullable=True)
-    avatar_url = Column(String(500), nullable=True)
-    is_active = Column(Boolean, default=True)
-    is_verified = Column(Boolean, default=False)
+    email = Column(String, unique=True, index=True)
 
-    # JSON поля для хранения сложных данных
-    user_data = Column(JSON, default=dict)  # Здесь хранится матрица судьбы
-    tarot_readings = Column(JSON, default=list)  # История раскладов таро
-    settings = Column(JSON, default=dict)  # Настройки пользователя
+    username = Column(String, unique=True, index=True)
 
-    # Даты
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    last_login = Column(DateTime(timezone=True), nullable=True)
+    hashed_password = Column(String)
 
-    # Дополнительная статистика
-    total_calculations = Column(Integer, default=0)
+    # дата рождения
+    birth_day = Column(Integer)
+
+    birth_month = Column(Integer)
+
+    birth_year = Column(Integer)
+
+    # матрица судьбы
+    matrix_data = Column(JSON)
 
     def __repr__(self):
         return f"<User {self.username}>"
+
+# Остальные модели (CalculationHistory, SessionToken) оставьте без изменений, но тоже исправьте импорт Base
 
 
 class CalculationHistory(Base):

@@ -1,9 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 
-# Импортируем роутер
-from routers.auth import router as auth_router
+from app.api.auth import router as auth_router
+from app.api.matrix import router as matrix_router
+from app.users import router as users_router
+
+from app.database import engine
+from app.models import Base
+
+# Создание таблиц
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Destiny Matrix Tarot API",
@@ -11,7 +17,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ==================== CORS ====================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,10 +25,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==================== Подключаем роутеры ====================
-app.include_router(auth_router, prefix="/api", tags=["Auth"])
+# Роуты
+app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 
-# ==================== Тестовые эндпоинты ====================
+app.include_router(users_router, prefix="/api/users", tags=["Users"])
+
+app.include_router(matrix_router, prefix="/api/matrix", tags=["Matrix"])
+
+
 @app.get("/")
 async def root():
     return {
@@ -31,10 +40,7 @@ async def root():
         "docs": "/docs"
     }
 
+
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
-
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
