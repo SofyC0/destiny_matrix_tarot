@@ -1,171 +1,327 @@
+# app/services/matrix_ai_service.py
+
 import os
 
 from openai import OpenAI
 
-from app.data.arcana_meanings import ARCANA_MEANINGS
+from app.data.arcana_meanings import ARCANA
 
-from app.services.premium_service import (can_access_matrix_element, can_ask_ai_question)
+from app.services.premium_service import (
+    can_ask_ai_question,
+    can_access_full_ai
+)
 
-# ==========================================
-# DEEPSEEK CLIENT
-# ==========================================
+# =====================================================
+# OPENROUTER / DEEPSEEK
+# =====================================================
 
 client = OpenAI(
+
     api_key=os.getenv("OPENROUTER_API_KEY"),
+
     base_url="https://openrouter.ai/api/v1"
 )
 
+# =====================================================
+# AI MEMORY
+# =====================================================
 
-# ==========================================
-# ПОДГОТОВКА АРКАНОВ
-# ==========================================
+AI_MEMORY_LIMIT = 12
+
+user_memory = {}
+
+# =====================================================
+# SYSTEM PROMPT
+# =====================================================
+
+SYSTEM_PROMPT = """
+Ты — профессиональный AI интерпретатор Матрицы Судьбы.
+
+ВАЖНО:
+
+1. Анализируй ТОЛЬКО через матрицу судьбы.
+2. Не используй астрологию.
+3. Не используй психологические диагнозы.
+4. Не используй эзотерический бред.
+5. Не придумывай магию.
+6. Не уходи в болезни и опасные темы.
+7. Объясняй через энергии арканов.
+8. Анализируй конфликты энергий.
+9. Анализируй сильные и слабые стороны.
+10. Отвечай как опытный интерпретатор.
+
+Ты можешь анализировать:
+- предназначение
+- деньги
+- отношения
+- родовые линии
+- кармический хвост
+- внутренние конфликты
+- сильные энергии
+- внутренние точки
+- каналы
+- возрастные циклы
+
+Пиши понятно и структурированно.
+"""
+
+# =====================================================
+# MEMORY
+# =====================================================
+
+def save_to_memory(
+        user_id,
+        role,
+        content
+):
+
+    if user_id not in user_memory:
+
+        user_memory[user_id] = []
+
+    user_memory[user_id].append({
+
+        "role": role,
+
+        "content": content
+    })
+
+    if len(user_memory[user_id]) > AI_MEMORY_LIMIT:
+
+        user_memory[user_id] = user_memory[user_id][
+            -AI_MEMORY_LIMIT:
+        ]
+
+
+def get_memory(user_id):
+
+    return user_memory.get(user_id, [])
+
+
+def clear_memory(user_id):
+
+    user_memory[user_id] = []
+
+
+# =====================================================
+# ARCANA CONTEXT
+# =====================================================
 
 def build_arcana_context(matrix_data):
-    """
-    Собирает описания арканов матрицы
-    """
 
     used_arcanas = set()
 
-    for value in matrix_data.values():
+    def extract(value):
 
         if isinstance(value, int):
+
             used_arcanas.add(value)
 
         elif isinstance(value, list):
+
             for item in value:
-                if isinstance(item, int):
-                    used_arcanas.add(item)
+
+                extract(item)
+
+        elif isinstance(value, dict):
+
+            for item in value.values():
+
+                extract(item)
+
+    extract(matrix_data)
 
     context = ""
 
-    for arcana in used_arcanas:
+    for arcana in sorted(used_arcanas):
 
-        if arcana in ARCANA_MEANINGS:
+        if arcana in ARCANA:
 
-            meaning = ARCANA_MEANINGS[arcana]
+            info = ARCANA[arcana]
 
             context += f"""
-Аркан {arcana}
 
-Название:
-{meaning.get("name")}
+Аркан {arcana}
+Название: {info.get("name", "")}
 
 Свет:
-{meaning.get("light")}
+{info.get("light", "")}
 
 Тень:
-{meaning.get("shadow")}
+{info.get("shadow", "")}
 
 Предназначение:
-{meaning.get("purpose")}
+{info.get("mission", "")}
 
-Отношения:
-{meaning.get("relationships")}
+Любовь:
+{info.get("love", "")}
 
 Деньги:
-{meaning.get("money")}
+{info.get("money", "")}
 
-====================
+==========================
 """
 
     return context
 
 
-# ==========================================
-# SYSTEM PROMPT
-# ==========================================
+# =====================================================
+# MATRIX SUMMARY
+# =====================================================
 
-SYSTEM_PROMPT = """
-Ты — AI интерпретатор Матрицы Судьбы
-по системе Наталии Ладини.
+def build_matrix_summary(matrix_data):
 
-Твои правила:
+    return f"""
+Центр: {matrix_data.get("center")}
 
-1. Анализируй ТОЛЬКО матрицу.
-2. Не используй астрологию.
-3. Не используй психологические диагнозы.
-4. Не придумывай магию.
-5. Не говори про болезни.
-6. Не давай опасных советов.
-7. Объясняй через энергии арканов.
-8. Отвечай мягко и понятно.
-9. Не пиши огромные тексты.
-10. Пиши как профессиональный интерпретатор матрицы.
+Визитка:
+{matrix_data.get("business_card")}
 
-Ты должен:
-- анализировать конфликты энергий
-- сильные стороны
-- предназначение
-- денежный канал
-- отношения
-- кармические задачи
-- родовые линии
+Духовное предназначение:
+{matrix_data.get("spiritual_destiny")}
 
-Но ТОЛЬКО через матрицу.
+Социальное предназначение:
+{matrix_data.get("social_destiny")}
+
+Материальное предназначение:
+{matrix_data.get("material_destiny")}
+
+Денежный канал:
+{matrix_data.get("money_channel")}
+
+Любовный канал:
+{matrix_data.get("love_channel")}
+
+Кармический хвост:
+{matrix_data.get("karmic_tail")}
+
+Мужской род:
+{matrix_data.get("male_generation_line")}
+
+Женский род:
+{matrix_data.get("female_generation_line")}
 """
 
 
-# ==========================================
-# AI АНАЛИЗ ВСЕЙ МАТРИЦЫ
-# ==========================================
+# =====================================================
+# AI REQUEST
+# =====================================================
 
-def generate_full_matrix_analysis(matrix_data):
+def ask_ai(messages):
 
-    arcana_context = build_arcana_context(matrix_data)
+    try:
+
+        response = client.chat.completions.create(
+
+            model="deepseek/deepseek-chat",
+
+            messages=messages,
+
+            temperature=0.7,
+
+            max_tokens=1200
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+
+        return f"AI error: {str(e)}"
+
+
+# =====================================================
+# FULL MATRIX READING
+# =====================================================
+
+def generate_full_matrix_reading(
+        matrix_data,
+        is_premium=False
+):
+
+    if not can_access_full_ai(is_premium):
+
+        return (
+            "Полный AI анализ "
+            "доступен только в Premium."
+        )
+
+    arcana_context = build_arcana_context(
+        matrix_data
+    )
+
+    matrix_summary = build_matrix_summary(
+        matrix_data
+    )
 
     prompt = f"""
-Вот матрица человека:
+Матрица человека:
 
-{matrix_data}
+{matrix_summary}
 
-Вот значения арканов:
+Арканы:
 
 {arcana_context}
 
 Сделай:
+
 1. Общий анализ личности
-2. Сильные энергии
+2. Главные энергии
 3. Внутренние конфликты
 4. Предназначение
-5. Денежный канал
+5. Деньги
 6. Отношения
-7. Родовые задачи
-8. Кармический хвост
+7. Родовые программы
+8. Кармические задачи
+9. Сильные стороны
+10. Слабые стороны
 
-Пиши структурированно.
+Отвечай структурированно.
 """
 
-    response = client.chat.completions.create(
-        model="deepseek/deepseek-chat",
+    messages = [
 
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        },
 
-        temperature=0.7,
-        max_tokens=1200
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ]
+
+    return ask_ai(messages)
+
+
+# =====================================================
+# ELEMENT READING
+# =====================================================
+
+def generate_element_reading(
+        matrix_data,
+        element_name,
+        is_premium=False
+):
+
+    if not can_access_full_ai(is_premium):
+
+        return (
+            "AI разбор элементов "
+            "доступен только в Premium."
+        )
+
+    element_value = matrix_data.get(
+        element_name
     )
 
-    return response.choices[0].message.content
+    if element_value is None:
 
+        return "Элемент не найден."
 
-# ==========================================
-# AI АНАЛИЗ ЭЛЕМЕНТА
-# ==========================================
-
-def generate_element_analysis(
-        matrix_data,
-        element_name
-):
-    arcana_context = build_arcana_context(matrix_data)
+    arcana_context = build_arcana_context(
+        matrix_data
+    )
 
     prompt = f"""
 Матрица:
@@ -176,50 +332,68 @@ def generate_element_analysis(
 
 {arcana_context}
 
-Сделай подробный анализ элемента:
+Сделай полный анализ элемента:
 
 {element_name}
 
+Значение:
+{element_value}
+
 Объясни:
+- как проявляется
 - сильные стороны
 - слабые стороны
-- как проявляется
-- как проработать
+- проблемы
+- потенциал
+- как раскрывается
 """
 
-    response = client.chat.completions.create(
-        model="deepseek/deepseek-chat",
+    messages = [
 
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        },
 
-        temperature=0.7,
-        max_tokens=700
-    )
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ]
 
-    return response.choices[0].message.content
+    return ask_ai(messages)
 
 
-# ==========================================
-# AI ОТВЕТЫ НА ВОПРОСЫ
-# ==========================================
+# =====================================================
+# AI QUESTIONS
+# =====================================================
 
 def ask_matrix_question(
+        user_id,
         matrix_data,
-        question
+        question,
+        is_premium=False,
+        ai_questions_used=0
 ):
-    arcana_context = build_arcana_context(matrix_data)
+
+    if not can_ask_ai_question(
+            is_premium,
+            ai_questions_used
+    ):
+
+        return (
+            "Лимит AI вопросов "
+            "для FREE тарифа исчерпан."
+        )
+
+    arcana_context = build_arcana_context(
+        matrix_data
+    )
+
+    memory = get_memory(user_id)
 
     prompt = f"""
-Матрица человека:
+Матрица:
 
 {matrix_data}
 
@@ -227,31 +401,42 @@ def ask_matrix_question(
 
 {arcana_context}
 
-Вопрос пользователя:
+Вопрос:
 
 {question}
 
-Отвечай только через матрицу судьбы.
-Не уходи в психологию.
-Не используй астрологию.
+Отвечай только через матрицу.
 """
 
-    response = client.chat.completions.create(
-        model="deepseek/deepseek-chat",
+    messages = [
 
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        }
+    ]
 
-        temperature=0.7,
-        max_tokens=600
+    messages.extend(memory)
+
+    messages.append({
+
+        "role": "user",
+
+        "content": prompt
+    })
+
+    answer = ask_ai(messages)
+
+    save_to_memory(
+        user_id,
+        "user",
+        question
     )
 
-    return response.choices[0].message.content
+    save_to_memory(
+        user_id,
+        "assistant",
+        answer
+    )
+
+    return answer

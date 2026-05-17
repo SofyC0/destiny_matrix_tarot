@@ -3,273 +3,35 @@
 from app.data.arcana_meanings import ARCANA
 
 
-# ======================================================
-# ПОЛУЧИТЬ ИНФО ОБ АРКАНЕ
-# ======================================================
+# =====================================================
+# ПОЛУЧИТЬ АРКАН
+# =====================================================
 
 def get_arcana_info(arcana_number: int):
 
     return ARCANA.get(
-
         arcana_number,
-
         {
-            "name": "Неизвестно",
+            "name": "Неизвестный аркан",
             "short": "",
             "light": "",
-            "shadow": ""
+            "shadow": "",
+            "mission": "",
+            "love": "",
+            "money": ""
         }
     )
 
 
-# ======================================================
-# ЦЕНТР МАТРИЦЫ
-# ======================================================
+# =====================================================
+# СОЗДАНИЕ РАЗБОРА АРКАНА
+# =====================================================
 
-def interpret_center(matrix):
-
-    center = matrix["main_arcana"]["center"]
-
-    info = get_arcana_info(center)
-
-    return {
-
-        "position": "center",
-
-        "arcana": center,
-
-        "name": info["name"],
-
-        "meaning": {
-
-            "short": info["short"],
-
-            "light": info["light"],
-
-            "shadow": info["shadow"],
-
-            "mission": info["mission"],
-
-            "love": info["love"],
-
-            "money": info["money"]
-        }
-    }
-
-
-# ======================================================
-# ВИЗИТКА
-# ======================================================
-
-def interpret_business_card(matrix):
-
-    arcana = matrix["business_card"]
+def build_arcana_reading(arcana):
 
     info = get_arcana_info(arcana)
 
     return {
-
-        "position": "business_card",
-
-        "arcana": arcana,
-
-        "name": info["name"],
-
-        "meaning": {
-
-            "short": info["short"],
-
-            "light": info["light"],
-
-            "shadow": info["shadow"]
-        }
-    }
-
-
-# ======================================================
-# КАНАЛ ДЕНЕГ
-# ======================================================
-
-def interpret_money_channel(matrix):
-
-    channel = matrix["money_channel"]
-
-    interpretations = []
-
-    for arcana in channel:
-
-        info = get_arcana_info(arcana)
-
-        interpretations.append({
-
-            "arcana": arcana,
-
-            "name": info["name"],
-
-            "money": info["money"]
-        })
-
-    return {
-
-        "position": "money_channel",
-
-        "channel": interpretations,
-
-        "summary":
-            "Финансовый поток человека "
-            "раскрывается через эти энергии."
-    }
-
-
-# ======================================================
-# КАНАЛ ЛЮБВИ
-# ======================================================
-
-def interpret_love_channel(matrix):
-
-    channel = matrix["love_channel"]
-
-    interpretations = []
-
-    for arcana in channel:
-
-        info = get_arcana_info(arcana)
-
-        interpretations.append({
-
-            "arcana": arcana,
-
-            "name": info["name"],
-
-            "love": info["love"]
-        })
-
-    return {
-
-        "position": "love_channel",
-
-        "channel": interpretations,
-
-        "summary":
-            "Энергии отношений "
-            "и эмоциональной реализации."
-    }
-
-
-# ======================================================
-# ПРЕДНАЗНАЧЕНИЯ
-# ======================================================
-
-def interpret_destinations(matrix):
-
-    destinations = matrix["destinations"]
-
-    result = {}
-
-    for key, arcana in destinations.items():
-
-        info = get_arcana_info(arcana)
-
-        result[key] = {
-
-            "arcana": arcana,
-
-            "name": info["name"],
-
-            "mission": info["mission"]
-        }
-
-    return result
-
-
-# ======================================================
-# РОДОВЫЕ ЛИНИИ
-# ======================================================
-
-def interpret_generation_lines(matrix):
-
-    male = matrix["male_generation_line"]
-
-    female = matrix["female_generation_line"]
-
-    male_result = []
-    female_result = []
-
-    for arcana in male:
-
-        info = get_arcana_info(arcana)
-
-        male_result.append({
-
-            "arcana": arcana,
-
-            "name": info["name"]
-        })
-
-    for arcana in female:
-
-        info = get_arcana_info(arcana)
-
-        female_result.append({
-
-            "arcana": arcana,
-
-            "name": info["name"]
-        })
-
-    return {
-
-        "male_generation_line": male_result,
-
-        "female_generation_line": female_result
-    }
-
-
-# ======================================================
-# КАРМИЧЕСКИЙ ХВОСТ
-# ======================================================
-
-def interpret_karma_tail(matrix):
-
-    karma = matrix["karma_tail"]
-
-    result = {}
-
-    for key, arcana in karma.items():
-
-        info = get_arcana_info(arcana)
-
-        result[key] = {
-
-            "arcana": arcana,
-
-            "name": info["name"],
-
-            "shadow": info["shadow"]
-        }
-
-    return result
-
-
-# ======================================================
-# ВОЗРАСТНЫЕ АРКАНЫ
-# ======================================================
-
-def interpret_age_arcana(matrix, age: int):
-
-    age_arcana = matrix["age_arcana"]
-
-    arcana = age_arcana.get(str(age))
-
-    if not arcana:
-
-        return None
-
-    info = get_arcana_info(arcana)
-
-    return {
-
-        "age": age,
 
         "arcana": arcana,
 
@@ -277,13 +39,322 @@ def interpret_age_arcana(matrix, age: int):
 
         "short": info["short"],
 
-        "mission": info["mission"]
+        "light": info["light"],
+
+        "shadow": info["shadow"],
+
+        "mission": info["mission"],
+
+        "love": info["love"],
+
+        "money": info["money"]
     }
 
 
-# ======================================================
+# =====================================================
+# ЦЕНТР
+# =====================================================
+
+def interpret_center(matrix):
+
+    return {
+
+        "position": "center",
+
+        **build_arcana_reading(
+            matrix["center"]
+        )
+    }
+
+
+# =====================================================
+# ВИЗИТКА
+# =====================================================
+
+def interpret_business_card(matrix):
+
+    return {
+
+        "position": "business_card",
+
+        **build_arcana_reading(
+            matrix["business_card"]
+        )
+    }
+
+
+# =====================================================
+# ДЕНЕЖНЫЙ КАНАЛ
+# =====================================================
+
+def interpret_money_channel(matrix):
+
+    channel = []
+
+    for arcana in matrix["money_channel"]:
+
+        channel.append(
+            build_arcana_reading(arcana)
+        )
+
+    return {
+
+        "position": "money_channel",
+
+        "channel": channel,
+
+        "strong_energies":
+            matrix["strong_money_energies"],
+
+        "weak_energies":
+            matrix["weak_money_energies"],
+
+        "summary":
+            "Финансовая реализация, "
+            "способ заработка и денежные блоки."
+    }
+
+
+# =====================================================
+# ЛЮБОВНЫЙ КАНАЛ
+# =====================================================
+
+def interpret_love_channel(matrix):
+
+    channel = []
+
+    for arcana in matrix["love_channel"]:
+
+        channel.append(
+            build_arcana_reading(arcana)
+        )
+
+    return {
+
+        "position": "love_channel",
+
+        "channel": channel,
+
+        "harmonious":
+            matrix["harmonious_energies"],
+
+        "problematic":
+            matrix["problematic_energies"],
+
+        "summary":
+            "Эмоциональная реализация "
+            "и отношения."
+    }
+
+
+# =====================================================
+# ПРЕДНАЗНАЧЕНИЯ
+# =====================================================
+
+def interpret_destinies(matrix):
+
+    return {
+
+        "spiritual_destiny":
+            build_arcana_reading(
+                matrix["spiritual_destiny"]
+            ),
+
+        "social_destiny":
+            build_arcana_reading(
+                matrix["social_destiny"]
+            ),
+
+        "material_destiny":
+            build_arcana_reading(
+                matrix["material_destiny"]
+            )
+    }
+
+
+# =====================================================
+# РОДОВЫЕ ЛИНИИ
+# =====================================================
+
+def interpret_generation_lines(matrix):
+
+    male = []
+    female = []
+
+    for arcana in matrix["male_generation_line"]:
+
+        male.append(
+            build_arcana_reading(arcana)
+        )
+
+    for arcana in matrix["female_generation_line"]:
+
+        female.append(
+            build_arcana_reading(arcana)
+        )
+
+    return {
+
+        "male_generation_line": male,
+
+        "female_generation_line": female
+    }
+
+
+# =====================================================
+# КАРМИЧЕСКИЙ ХВОСТ
+# =====================================================
+
+def interpret_karmic_tail(matrix):
+
+    karmic = []
+
+    for arcana in matrix["karmic_tail"]:
+
+        karmic.append(
+            build_arcana_reading(arcana)
+        )
+
+    return {
+
+        "karmic_tail": karmic,
+
+        "summary":
+            "Кармические уроки "
+            "и повторяющиеся сценарии."
+    }
+
+
+# =====================================================
+# ВНУТРЕННИЕ ТОЧКИ
+# =====================================================
+
+def interpret_inner_points(matrix):
+
+    return {
+
+        "top_inner":
+            build_arcana_reading(
+                matrix["top_inner"]
+            ),
+
+        "bottom_inner":
+            build_arcana_reading(
+                matrix["bottom_inner"]
+            ),
+
+        "left_inner":
+            build_arcana_reading(
+                matrix["left_inner"]
+            ),
+
+        "right_inner":
+            build_arcana_reading(
+                matrix["right_inner"]
+            ),
+
+        "diagonal_1":
+            build_arcana_reading(
+                matrix["diagonal_1"]
+            ),
+
+        "diagonal_2":
+            build_arcana_reading(
+                matrix["diagonal_2"]
+            )
+    }
+
+
+# =====================================================
+# ВОЗРАСТНОЙ КРУГ
+# =====================================================
+
+def interpret_age_circle(matrix):
+
+    result = []
+
+    for item in matrix["age_circle"]:
+
+        arcana_data = build_arcana_reading(
+            item["arcana"]
+        )
+
+        result.append({
+
+            "age": item["age"],
+
+            **arcana_data
+        })
+
+    return result
+
+
+# =====================================================
+# РАЗБОР ОТДЕЛЬНОГО ЭЛЕМЕНТА
+# =====================================================
+
+def interpret_matrix_element(
+        matrix,
+        element_name
+):
+
+    element_map = {
+
+        "center":
+            matrix["center"],
+
+        "business_card":
+            matrix["business_card"],
+
+        "spiritual_destiny":
+            matrix["spiritual_destiny"],
+
+        "social_destiny":
+            matrix["social_destiny"],
+
+        "material_destiny":
+            matrix["material_destiny"],
+
+        "top_inner":
+            matrix["top_inner"],
+
+        "bottom_inner":
+            matrix["bottom_inner"],
+
+        "left_inner":
+            matrix["left_inner"],
+
+        "right_inner":
+            matrix["right_inner"],
+
+        "diagonal_1":
+            matrix["diagonal_1"],
+
+        "diagonal_2":
+            matrix["diagonal_2"],
+    }
+
+    if element_name not in element_map:
+
+        return {
+
+            "error":
+                "Element not found"
+        }
+
+    arcana = element_map[element_name]
+
+    return {
+
+        "element": element_name,
+
+        **build_arcana_reading(arcana)
+    }
+
+
+# =====================================================
 # ПОЛНЫЙ РАЗБОР
-# ======================================================
+# =====================================================
 
 def generate_full_matrix_reading(matrix):
 
@@ -301,12 +372,18 @@ def generate_full_matrix_reading(matrix):
         "love_channel":
             interpret_love_channel(matrix),
 
-        "destinations":
-            interpret_destinations(matrix),
+        "destinies":
+            interpret_destinies(matrix),
 
         "generation_lines":
             interpret_generation_lines(matrix),
 
-        "karma_tail":
-            interpret_karma_tail(matrix)
+        "karmic_tail":
+            interpret_karmic_tail(matrix),
+
+        "inner_points":
+            interpret_inner_points(matrix),
+
+        "age_circle":
+            interpret_age_circle(matrix)
     }

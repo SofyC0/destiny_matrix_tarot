@@ -4,9 +4,57 @@ from app.services.matrix_geometry_service import (
 )
 
 
-def build_matrix_visual(matrix_data):
+# ==========================================
+# SAFE GETTERS
+# ==========================================
 
-    points = []
+def get_list_value(data, index):
+
+    if not isinstance(data, list):
+        return None
+
+    if index >= len(data):
+        return None
+
+    return data[index]
+
+
+def get_dict_value(data, key):
+
+    if not isinstance(data, dict):
+        return None
+
+    return data.get(key)
+
+
+# ==========================================
+# MATRIX VISUAL BUILDER
+# ==========================================
+
+def build_matrix_visual(matrix_data):
+    """
+    Строит визуальную структуру матрицы
+    для frontend отображения
+    """
+
+    # ==========================================
+    # КАНАЛЫ
+    # ==========================================
+
+    money_channel = matrix_data.get(
+        "money_channel",
+        []
+    )
+
+    love_channel = matrix_data.get(
+        "love_channel",
+        []
+    )
+
+    karmic_tail = matrix_data.get(
+        "karma_tail",
+        {}
+    )
 
     # ==========================================
     # МАППИНГ ТОЧЕК
@@ -14,6 +62,7 @@ def build_matrix_visual(matrix_data):
 
     mapping = {
 
+        # основные точки
         "center": matrix_data.get("center"),
 
         "top": matrix_data.get("top"),
@@ -32,28 +81,59 @@ def build_matrix_visual(matrix_data):
 
         "bottom_right": matrix_data.get("bottom_right"),
 
-        "money_1": matrix_data.get("money_channel", [None])[0],
+        # денежный канал
+        "money_1": get_list_value(
+            money_channel,
+            0
+        ),
 
-        "money_2": matrix_data.get("money_channel", [None, None])[1],
+        "money_2": get_list_value(
+            money_channel,
+            1
+        ),
 
-        "love_1": matrix_data.get("love_channel", [None])[0],
+        # любовный канал
+        "love_1": get_list_value(
+            love_channel,
+            0
+        ),
 
-        "love_2": matrix_data.get("love_channel", [None, None])[1],
+        "love_2": get_list_value(
+            love_channel,
+            1
+        ),
 
-        "male_generation": matrix_data.get("male_generation_line"),
+        # родовые линии
+        "male_generation": matrix_data.get(
+            "male_generation_line"
+        ),
 
-        "female_generation": matrix_data.get("female_generation_line"),
+        "female_generation": matrix_data.get(
+            "female_generation_line"
+        ),
 
-        "karmic_1": matrix_data.get("karmic_tail", [None])[0],
+        # кармический хвост
+        "karmic_1": get_dict_value(
+            karmic_tail,
+            "karmic_1"
+        ),
 
-        "karmic_2": matrix_data.get("karmic_tail", [None, None])[1],
+        "karmic_2": get_dict_value(
+            karmic_tail,
+            "karmic_2"
+        ),
 
-        "karmic_3": matrix_data.get("karmic_tail", [None, None, None])[2],
+        "karmic_3": get_dict_value(
+            karmic_tail,
+            "karmic_3"
+        ),
     }
 
     # ==========================================
-    # СОЗДАЕМ ТОЧКИ
+    # ТОЧКИ
     # ==========================================
+
+    points = []
 
     for point_name, coords in MATRIX_GEOMETRY.items():
 
@@ -63,9 +143,9 @@ def build_matrix_visual(matrix_data):
 
             "arcana": mapping.get(point_name),
 
-            "x": coords["x"],
+            "x": coords.get("x"),
 
-            "y": coords["y"]
+            "y": coords.get("y")
         })
 
     # ==========================================
@@ -76,12 +156,19 @@ def build_matrix_visual(matrix_data):
 
     for line in MATRIX_LINES:
 
+        if len(line) != 2:
+            continue
+
         lines.append({
 
             "from": line[0],
 
             "to": line[1]
         })
+
+    # ==========================================
+    # RESULT
+    # ==========================================
 
     return {
 

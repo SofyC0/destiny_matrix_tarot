@@ -1,37 +1,123 @@
+# ==========================================
+# SAFE FORMATTERS
+# ==========================================
+
+def format_value(value):
+
+    if value is None:
+        return "Не указано"
+
+    if isinstance(value, list):
+
+        if not value:
+            return "Не указано"
+
+        return ", ".join(
+            str(item)
+            for item in value
+        )
+
+    if isinstance(value, dict):
+
+        if not value:
+            return "Не указано"
+
+        result = []
+
+        for key, item in value.items():
+
+            result.append(
+                f"{key}: {item}"
+            )
+
+        return ", ".join(result)
+
+    return str(value)
+
+
+# ==========================================
+# MATRIX CONTEXT BUILDER
+# ==========================================
+
 def build_matrix_context(matrix):
+    """
+    Формирует текстовый контекст матрицы
+    для AI анализа
+    """
 
-    return f"""
+    if not isinstance(matrix, dict):
 
-ЦЕНТР:
-{matrix.get("center")}
+        raise ValueError(
+            "matrix must be dict"
+        )
 
-ВИЗИТКА:
-{matrix.get("business_card")}
+    sections = [
 
-ДУХОВНОЕ ПРЕДНАЗНАЧЕНИЕ:
-{matrix.get("spiritual_destiny")}
+        (
+            "ЦЕНТР",
+            matrix.get("center")
+        ),
 
-СОЦИАЛЬНОЕ ПРЕДНАЗНАЧЕНИЕ:
-{matrix.get("social_destiny")}
+        (
+            "ВИЗИТКА",
+            matrix.get("business_card")
+        ),
 
-МАТЕРИАЛЬНОЕ ПРЕДНАЗНАЧЕНИЕ:
-{matrix.get("material_destiny")}
+        (
+            "ДУХОВНОЕ ПРЕДНАЗНАЧЕНИЕ",
+            matrix.get("spiritual_destiny")
+        ),
 
-КАРМИЧЕСКИЙ ХВОСТ:
-{matrix.get("karmic_tail")}
+        (
+            "СОЦИАЛЬНОЕ ПРЕДНАЗНАЧЕНИЕ",
+            matrix.get("social_destiny")
+        ),
 
-ДЕНЕЖНЫЙ КАНАЛ:
-{matrix.get("money_channel")}
+        (
+            "МАТЕРИАЛЬНОЕ ПРЕДНАЗНАЧЕНИЕ",
+            matrix.get("material_destiny")
+        ),
 
-ЛЮБОВНЫЙ КАНАЛ:
-{matrix.get("love_channel")}
+        (
+            "КАРМИЧЕСКИЙ ХВОСТ",
+            matrix.get("karma_tail")
+        ),
 
-МУЖСКОЙ РОД:
-{matrix.get("male_generation_line")}
+        (
+            "ДЕНЕЖНЫЙ КАНАЛ",
+            matrix.get("money_channel")
+        ),
 
-ЖЕНСКИЙ РОД:
-{matrix.get("female_generation_line")}
+        (
+            "ЛЮБОВНЫЙ КАНАЛ",
+            matrix.get("love_channel")
+        ),
 
-ВНУТРЕННИЕ ТОЧКИ:
-{matrix.get("inner_points")}
+        (
+            "МУЖСКОЙ РОД",
+            matrix.get("male_generation_line")
+        ),
+
+        (
+            "ЖЕНСКИЙ РОД",
+            matrix.get("female_generation_line")
+        ),
+
+        (
+            "ВНУТРЕННИЕ ТОЧКИ",
+            matrix.get("inner_points")
+        )
+    ]
+
+    result = []
+
+    for title, value in sections:
+
+        result.append(
+            f"""
+{title}:
+{format_value(value)}
 """
+        )
+
+    return "\n".join(result)

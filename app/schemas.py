@@ -1,25 +1,107 @@
-from pydantic import BaseModel, EmailStr
-from typing import Dict, Any
+from typing import (
+    Any,
+    Dict,
+    Optional
+)
+
+from pydantic import (
+
+    BaseModel,
+
+    ConfigDict,
+
+    EmailStr,
+
+    Field,
+
+    field_validator
+)
+
+
+# ==========================================
+# BASE USER
+# ==========================================
+
+class UserBase(BaseModel):
+
+    email: EmailStr
+
+    username: str = Field(
+
+        min_length=3,
+
+        max_length=30
+    )
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(
+            cls,
+            value: str
+    ):
+
+        value = value.strip()
+
+        if not value:
+
+            raise ValueError(
+                "Username cannot be empty"
+            )
+
+        return value
 
 
 # ==========================================
 # REGISTER
 # ==========================================
 
-class UserCreate(BaseModel):
+class UserCreate(UserBase):
 
-    email: EmailStr
+    password: str = Field(
 
-    username: str
+        min_length=6,
 
-    password: str
+        max_length=72
+    )
 
-    # дата рождения
-    birth_day: int
+    # birth date
+    birth_day: int = Field(
 
-    birth_month: int
+        ge=1,
 
-    birth_year: int
+        le=31
+    )
+
+    birth_month: int = Field(
+
+        ge=1,
+
+        le=12
+    )
+
+    birth_year: int = Field(
+
+        ge=1900,
+
+        le=2100
+    )
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(
+            cls,
+            value: str
+    ):
+
+        value = value.strip()
+
+        if len(value) < 6:
+
+            raise ValueError(
+                "Password too short"
+            )
+
+        return value
 
 
 # ==========================================
@@ -30,7 +112,12 @@ class UserLogin(BaseModel):
 
     email: EmailStr
 
-    password: str
+    password: str = Field(
+
+        min_length=1,
+
+        max_length=72
+    )
 
 
 # ==========================================
@@ -45,24 +132,53 @@ class Token(BaseModel):
 
 
 # ==========================================
-# USER OUT
+# TOKEN PAYLOAD
+# ==========================================
+
+class TokenPayload(BaseModel):
+
+    sub: str
+
+    exp: int
+
+
+# ==========================================
+# USER RESPONSE
 # ==========================================
 
 class UserOut(BaseModel):
 
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
     id: int
 
-    email: str
+    email: EmailStr
 
     username: str
 
-    birth_day: int
+    is_premium: bool
 
-    birth_month: int
+    birth_day: Optional[int] = None
 
-    birth_year: int
+    birth_month: Optional[int] = None
 
-    matrix_data: Dict[str, Any] | None = None
+    birth_year: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    matrix_data: Optional[
+        Dict[str, Any]
+    ] = None
+
+
+# ==========================================
+# AUTH RESPONSE
+# ==========================================
+
+class AuthResponse(BaseModel):
+
+    access_token: str
+
+    token_type: str
+
+    user: UserOut

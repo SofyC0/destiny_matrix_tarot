@@ -2,13 +2,13 @@ from app.services.matrix_service import calculate_matrix
 
 
 # =====================================
-# КООРДИНАТЫ МАТРИЦЫ
+# КООРДИНАТЫ
 # =====================================
 
 POINT_COORDINATES = {
 
     # =================================
-    # ОСНОВНЫЕ ТОЧКИ
+    # ОСНОВА
     # =================================
 
     "center": {"x": 0, "y": 0},
@@ -30,7 +30,7 @@ POINT_COORDINATES = {
     "bottom_right": {"x": 220, "y": 220},
 
     # =================================
-    # ВНУТРЕННИЙ КРЕСТ
+    # ВНУТРЕННИЕ ТОЧКИ
     # =================================
 
     "top_inner": {"x": 0, "y": -170},
@@ -87,72 +87,45 @@ POINT_COORDINATES = {
 
 LINES = [
 
-    # =================================
-    # ВНЕШНИЙ КВАДРАТ
-    # =================================
-
+    # КВАДРАТ
     ("top", "right"),
     ("right", "bottom"),
     ("bottom", "left"),
     ("left", "top"),
 
-    # =================================
     # ДИАГОНАЛИ
-    # =================================
-
     ("top_left", "bottom_right"),
     ("top_right", "bottom_left"),
 
-    # =================================
     # КРЕСТ
-    # =================================
-
     ("top", "bottom"),
     ("left", "right"),
 
-    # =================================
     # ВНУТРЕННИЙ КРЕСТ
-    # =================================
-
     ("top_inner", "bottom_inner"),
     ("left_inner", "right_inner"),
 
-    # =================================
     # МУЖСКОЙ РОД
-    # =================================
-
     ("center", "male_1"),
     ("male_1", "male_2"),
     ("male_2", "male_3"),
 
-    # =================================
     # ЖЕНСКИЙ РОД
-    # =================================
-
     ("center", "female_1"),
     ("female_1", "female_2"),
     ("female_2", "female_3"),
 
-    # =================================
     # ДЕНЬГИ
-    # =================================
-
     ("center", "money_1"),
     ("money_1", "money_2"),
     ("money_2", "money_3"),
 
-    # =================================
     # ЛЮБОВЬ
-    # =================================
-
     ("center", "love_1"),
     ("love_1", "love_2"),
     ("love_2", "love_3"),
 
-    # =================================
     # КАРМИЧЕСКИЙ ХВОСТ
-    # =================================
-
     ("center", "karmic_1"),
     ("karmic_1", "karmic_2"),
     ("karmic_2", "karmic_3"),
@@ -160,7 +133,7 @@ LINES = [
 
 
 # =====================================
-# ВОЗРАСТНОЙ КРУГ
+# AGE CIRCLE
 # =====================================
 
 AGE_CIRCLE_COORDINATES = [
@@ -183,16 +156,101 @@ AGE_CIRCLE_COORDINATES = [
 # СОЗДАНИЕ ТОЧКИ
 # =====================================
 
-def create_point(name, arcana):
+def create_point(
+        name,
+        arcana
+):
+
     return {
+
         "name": name,
+
         "arcana": arcana,
-        **POINT_COORDINATES[name]
+
+        "x": POINT_COORDINATES[name]["x"],
+
+        "y": POINT_COORDINATES[name]["y"]
     }
 
 
 # =====================================
-# СОЗДАНИЕ ГЕОМЕТРИИ
+# AGE CIRCLE
+# =====================================
+
+def build_age_circle(matrix):
+
+    age_circle = []
+
+    for point in AGE_CIRCLE_COORDINATES:
+
+        age = point["age"]
+
+        age_arcana = None
+
+        for item in matrix["age_circle"]:
+
+            if item["age"] == age:
+
+                age_arcana = item["arcana"]
+
+                break
+
+        age_circle.append({
+
+            "age": age,
+
+            "arcana": age_arcana,
+
+            "x": point["x"],
+
+            "y": point["y"]
+        })
+
+    return age_circle
+
+
+# =====================================
+# CONNECTIONS
+# =====================================
+
+def build_connections():
+
+    return [
+
+        {
+            "from": "center",
+            "to": "money_1",
+            "type": "money_channel"
+        },
+
+        {
+            "from": "center",
+            "to": "love_1",
+            "type": "love_channel"
+        },
+
+        {
+            "from": "center",
+            "to": "male_1",
+            "type": "male_generation"
+        },
+
+        {
+            "from": "center",
+            "to": "female_1",
+            "type": "female_generation"
+        },
+
+        {
+            "from": "center",
+            "to": "karmic_1",
+            "type": "karmic_tail"
+        }
+    ]
+
+
+# =====================================
+# ГЕОМЕТРИЯ МАТРИЦЫ
 # =====================================
 
 def build_matrix_geometry(
@@ -213,13 +271,30 @@ def build_matrix_geometry(
         # ОСНОВА
         # =================================
 
-        create_point("center", matrix["center"]),
+        create_point(
+            "center",
+            matrix["center"]
+        ),
 
-        create_point("top", matrix["day_arcana"]),
-        create_point("bottom", matrix["month_arcana"]),
+        create_point(
+            "top",
+            matrix["square"]["top"]
+        ),
 
-        create_point("left", matrix["business_card"]),
-        create_point("right", matrix["material_destiny"]),
+        create_point(
+            "bottom",
+            matrix["square"]["bottom"]
+        ),
+
+        create_point(
+            "left",
+            matrix["square"]["left"]
+        ),
+
+        create_point(
+            "right",
+            matrix["square"]["right"]
+        ),
 
         # =================================
         # УГЛЫ
@@ -227,26 +302,26 @@ def build_matrix_geometry(
 
         create_point(
             "top_left",
-            matrix["spiritual_destiny"]
+            matrix["top_left"]
         ),
 
         create_point(
             "top_right",
-            matrix["social_destiny"]
+            matrix["top_right"]
         ),
 
         create_point(
             "bottom_left",
-            matrix["love_channel"][0]
+            matrix["bottom_left"]
         ),
 
         create_point(
             "bottom_right",
-            matrix["money_channel"][0]
+            matrix["bottom_right"]
         ),
 
         # =================================
-        # ВНУТРЕННИЙ КРЕСТ
+        # ВНУТРЕННИЕ ТОЧКИ
         # =================================
 
         create_point(
@@ -270,7 +345,7 @@ def build_matrix_geometry(
         ),
 
         # =================================
-        # ДЕНЕЖНЫЙ КАНАЛ
+        # ДЕНЬГИ
         # =================================
 
         create_point(
@@ -289,7 +364,7 @@ def build_matrix_geometry(
         ),
 
         # =================================
-        # ЛЮБОВНЫЙ КАНАЛ
+        # ЛЮБОВЬ
         # =================================
 
         create_point(
@@ -365,69 +440,15 @@ def build_matrix_geometry(
         ),
     ]
 
-    # =================================
-    # ВОЗРАСТНЫЕ ЭНЕРГИИ
-    # =================================
-
-    age_circle = []
-
-    for i, age_point in enumerate(AGE_CIRCLE_COORDINATES):
-
-        arcana = matrix["year_energies"][i]["arcana"]
-
-        age_circle.append({
-            "age": age_point["age"],
-            "arcana": arcana,
-            "x": age_point["x"],
-            "y": age_point["y"]
-        })
-
-    # =================================
-    # СВЯЗИ
-    # =================================
-
-    connections = [
-
-        {
-            "from": "center",
-            "to": "money_1",
-            "type": "money_channel"
-        },
-
-        {
-            "from": "center",
-            "to": "love_1",
-            "type": "love_channel"
-        },
-
-        {
-            "from": "center",
-            "to": "male_1",
-            "type": "male_generation"
-        },
-
-        {
-            "from": "center",
-            "to": "female_1",
-            "type": "female_generation"
-        },
-
-        {
-            "from": "center",
-            "to": "karmic_1",
-            "type": "karmic_tail"
-        }
-    ]
-
     return {
 
         "points": points,
 
         "lines": LINES,
 
-        "connections": connections,
+        "connections": build_connections(),
 
-        "age_circle": age_circle,
+        "age_circle": build_age_circle(matrix),
 
         "matrix_data": matrix
     }

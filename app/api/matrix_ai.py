@@ -1,19 +1,26 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from app.models import User
 
 from app.api.auth_utils import get_current_user
 
 from app.services.matrix_ai_service import (
-
     generate_full_matrix_reading,
-
     generate_element_reading,
-
     ask_matrix_question
 )
 
 router = APIRouter()
+
+
+# ==========================================
+# REQUEST MODEL
+# ==========================================
+
+class QuestionRequest(BaseModel):
+
+    question: str
 
 
 # ==========================================
@@ -27,6 +34,13 @@ def full_reading(
         get_current_user
     )
 ):
+
+    if not current_user.matrix_data:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Matrix data not found"
+        )
 
     result = generate_full_matrix_reading(
 
@@ -52,6 +66,13 @@ def element_reading(
     )
 ):
 
+    if not current_user.matrix_data:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Matrix data not found"
+        )
+
     result = generate_element_reading(
 
         current_user.matrix_data,
@@ -71,12 +92,19 @@ def element_reading(
 @router.post("/ask")
 def ask_question(
 
-    question: str,
+    request: QuestionRequest,
 
     current_user: User = Depends(
         get_current_user
     )
 ):
+
+    if not current_user.matrix_data:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Matrix data not found"
+        )
 
     result = ask_matrix_question(
 
@@ -84,7 +112,7 @@ def ask_question(
 
         current_user.matrix_data,
 
-        question
+        request.question
     )
 
     return {
