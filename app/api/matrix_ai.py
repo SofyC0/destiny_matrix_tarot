@@ -1,45 +1,92 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from app.models import User
+
+from app.api.auth_utils import get_current_user
 
 from app.services.matrix_ai_service import (
-    generate_full_matrix_analysis,
-    generate_element_analysis
+
+    generate_full_matrix_reading,
+
+    generate_element_reading,
+
+    ask_matrix_question
 )
 
-router = APIRouter(
-    prefix="/matrix-ai",
-    tags=["Matrix AI"]
-)
+router = APIRouter()
 
 
-@router.get("/full/{day}/{month}/{year}")
-def full_analysis(
-        day: int,
-        month: int,
-        year: int
+# ==========================================
+# ПОЛНЫЙ РАЗБОР
+# ==========================================
+
+@router.get("/full-reading")
+def full_reading(
+
+    current_user: User = Depends(
+        get_current_user
+    )
 ):
 
+    result = generate_full_matrix_reading(
+
+        current_user.matrix_data
+    )
+
     return {
-        "analysis": generate_full_matrix_analysis(
-            day,
-            month,
-            year
-        )
+        "reading": result
     }
 
 
-@router.get("/element/{element}/{day}/{month}/{year}")
-def element_analysis(
-        element: str,
-        day: int,
-        month: int,
-        year: int
+# ==========================================
+# РАЗБОР ЭЛЕМЕНТА
+# ==========================================
+
+@router.get("/element/{element_name}")
+def element_reading(
+
+    element_name: str,
+
+    current_user: User = Depends(
+        get_current_user
+    )
 ):
 
+    result = generate_element_reading(
+
+        current_user.matrix_data,
+
+        element_name
+    )
+
     return {
-        "analysis": generate_element_analysis(
-            element,
-            day,
-            month,
-            year
-        )
+        "reading": result
+    }
+
+
+# ==========================================
+# AI CHAT
+# ==========================================
+
+@router.post("/ask")
+def ask_question(
+
+    question: str,
+
+    current_user: User = Depends(
+        get_current_user
+    )
+):
+
+    result = ask_matrix_question(
+
+        current_user.id,
+
+        current_user.matrix_data,
+
+        question
+    )
+
+    return {
+        "answer": result
     }

@@ -1,49 +1,49 @@
-def reduce_to_22(num: int):
+# app/services/matrix_elements_service.py
+
+# ============================================================
+# MATRIX OF DESTINY — NATALIA LADINI METHOD
+# Полная логика расчёта матрицы судьбы 22 арканов
+# ============================================================
+
+
+# ============================================================
+# ОСНОВНАЯ УТИЛИТА
+# ============================================================
+
+def reduce_to_22(number: int) -> int:
 
     """
     Сведение числа к диапазону 1-22
     """
 
-    while num > 22:
+    while number > 22:
 
-        num = sum(
+        number = sum(
             int(digit)
-            for digit in str(num)
+            for digit in str(number)
         )
 
-    if num == 0:
-        num = 22
+    if number == 0:
+        number = 22
 
-    return num
+    return number
 
 
-# =========================================================
-# ОСНОВНЫЕ АРКАНЫ
-# =========================================================
+# ============================================================
+# БАЗОВЫЕ АРКАНЫ
+# ============================================================
 
-def calculate_top_arcana(day: int):
-
-    """
-    Верхняя точка матрицы
-    """
+def calculate_day_arcana(day: int):
 
     return reduce_to_22(day)
 
 
-def calculate_left_arcana(month: int):
-
-    """
-    Левая точка матрицы
-    """
+def calculate_month_arcana(month: int):
 
     return reduce_to_22(month)
 
 
-def calculate_right_arcana(year: int):
-
-    """
-    Правая точка матрицы
-    """
+def calculate_year_arcana(year: int):
 
     year_sum = sum(
         int(digit)
@@ -53,37 +53,29 @@ def calculate_right_arcana(year: int):
     return reduce_to_22(year_sum)
 
 
+# ============================================================
+# ОСНОВА МАТРИЦЫ
+# ============================================================
+
 def calculate_bottom_arcana(
-        top: int,
-        left: int,
-        right: int
+        day_arcana,
+        month_arcana,
+        year_arcana
 ):
 
-    """
-    Нижняя точка матрицы
-    """
-
     return reduce_to_22(
-        top +
-        left +
-        right
+        day_arcana +
+        month_arcana +
+        year_arcana
     )
 
 
-# =========================================================
-# ЦЕНТР
-# =========================================================
-
 def calculate_center_arcana(
-        top: int,
-        left: int,
-        right: int,
-        bottom: int
+        top,
+        left,
+        right,
+        bottom
 ):
-
-    """
-    Центр матрицы
-    """
 
     return reduce_to_22(
         top +
@@ -93,21 +85,17 @@ def calculate_center_arcana(
     )
 
 
-# =========================================================
-# ВНУТРЕННИЕ АРКАНЫ
-# =========================================================
+# ============================================================
+# ВНУТРЕННИЙ КВАДРАТ
+# ============================================================
 
-def calculate_inner_arcana(
-        top: int,
-        left: int,
-        right: int,
-        bottom: int,
-        center: int
+def calculate_inner_square(
+        top,
+        left,
+        right,
+        bottom,
+        center
 ):
-
-    """
-    Внутренние энергии
-    """
 
     return {
 
@@ -129,221 +117,16 @@ def calculate_inner_arcana(
     }
 
 
-# =========================================================
-# КАРМИЧЕСКИЙ ХВОСТ
-# =========================================================
-
-def calculate_karma_tail(
-        top: int,
-        left: int,
-        right: int
-):
-
-    """
-    Кармические задачи
-    """
-
-    return {
-
-        "karma_1": reduce_to_22(
-            top + left
-        ),
-
-        "karma_2": reduce_to_22(
-            left + right
-        ),
-
-        "karma_3": reduce_to_22(
-            top + right
-        )
-    }
-
-
-# =========================================================
-# ЛИНИЯ ДЕНЕГ
-# =========================================================
-
-def calculate_money_line(
-        center: int,
-        right: int,
-        bottom: int
-):
-
-    """
-    Денежная линия
-    """
-
-    first = reduce_to_22(
-        center + right
-    )
-
-    second = reduce_to_22(
-        first + bottom
-    )
-
-    return [
-
-        center,
-        first,
-        second
-    ]
-
-
-# =========================================================
-# ЛИНИЯ ЛЮБВИ
-# =========================================================
-
-def calculate_love_line(
-        center: int,
-        left: int,
-        bottom: int
-):
-
-    """
-    Линия любви
-    """
-
-    first = reduce_to_22(
-        center + left
-    )
-
-    second = reduce_to_22(
-        first + bottom
-    )
-
-    return [
-
-        center,
-        first,
-        second
-    ]
-
-
-# =========================================================
-# МУЖСКОЙ РОД
-# =========================================================
-
-def calculate_male_generation_line(
-        top: int,
-        right: int
-):
-
-    """
-    Мужской род
-    """
-
-    return [
-
-        reduce_to_22(
-            top + right
-        ),
-
-        reduce_to_22(
-            right * 2
-        )
-    ]
-
-
-# =========================================================
-# ЖЕНСКИЙ РОД
-# =========================================================
-
-def calculate_female_generation_line(
-        left: int,
-        bottom: int
-):
-
-    """
-    Женский род
-    """
-
-    return [
-
-        reduce_to_22(
-            left + bottom
-        ),
-
-        reduce_to_22(
-            left * 2
-        )
-    ]
-
-
-# =========================================================
-# ЛИЧНОСТЬ
-# =========================================================
-
-def calculate_personality_arcana(
-        top: int,
-        left: int
-):
-
-    """
-    Личность
-    """
-
-    return reduce_to_22(
-        top + left
-    )
-
-
-# =========================================================
-# ДУША
-# =========================================================
-
-def calculate_soul_arcana(
-        center: int,
-        top: int
-):
-
-    """
-    Душа
-    """
-
-    return reduce_to_22(
-        center + top
-    )
-
-
-# =========================================================
-# ВОЗРАСТНЫЕ АРКАНЫ
-# =========================================================
-
-def calculate_age_arcana(
-        birth_year: int
-):
-
-    """
-    Аркан каждого возраста
-    """
-
-    result = {}
-
-    for age in range(1, 81):
-
-        age_value = reduce_to_22(
-            birth_year + age
-        )
-
-        result[str(age)] = age_value
-
-    return result
-
-
-# =========================================================
+# ============================================================
 # ВНЕШНИЙ КВАДРАТ
-# =========================================================
+# ============================================================
 
 def calculate_outer_square(
-        top: int,
-        left: int,
-        right: int,
-        bottom: int
+        top,
+        left,
+        right,
+        bottom
 ):
-
-    """
-    Внешние углы матрицы
-    """
 
     return {
 
@@ -365,47 +148,284 @@ def calculate_outer_square(
     }
 
 
-# =========================================================
+# ============================================================
 # ДИАГОНАЛИ
-# =========================================================
+# ============================================================
 
 def calculate_diagonals(
-        top: int,
-        left: int,
-        right: int,
-        bottom: int,
-        center: int
+        top,
+        left,
+        right,
+        bottom,
+        center
 ):
-
-    """
-    Диагонали матрицы
-    """
 
     return {
 
         "male_diagonal": [
 
             top,
-
             center,
-
             bottom
         ],
 
         "female_diagonal": [
 
             left,
-
             center,
-
             right
         ]
     }
 
 
-# =========================================================
-# ПОЛНАЯ МАТРИЦА
-# =========================================================
+# ============================================================
+# КАНАЛ ДЕНЕГ
+# ============================================================
+
+def calculate_money_channel(
+        center,
+        right,
+        bottom
+):
+
+    first = reduce_to_22(
+        center + right
+    )
+
+    second = reduce_to_22(
+        first + bottom
+    )
+
+    return [
+
+        center,
+        first,
+        second
+    ]
+
+
+# ============================================================
+# КАНАЛ ЛЮБВИ
+# ============================================================
+
+def calculate_love_channel(
+        center,
+        left,
+        bottom
+):
+
+    first = reduce_to_22(
+        center + left
+    )
+
+    second = reduce_to_22(
+        first + bottom
+    )
+
+    return [
+
+        center,
+        first,
+        second
+    ]
+
+
+# ============================================================
+# ВИЗИТКА
+# ============================================================
+
+def calculate_business_card(
+        day_arcana,
+        month_arcana
+):
+
+    """
+    Визитка личности
+    """
+
+    return reduce_to_22(
+        day_arcana +
+        month_arcana
+    )
+
+
+# ============================================================
+# КАРМИЧЕСКИЙ ХВОСТ
+# ============================================================
+
+def calculate_karma_tail(
+        top,
+        left,
+        right
+):
+
+    return {
+
+        "karma_1": reduce_to_22(
+            top + left
+        ),
+
+        "karma_2": reduce_to_22(
+            left + right
+        ),
+
+        "karma_3": reduce_to_22(
+            top + right
+        )
+    }
+
+
+# ============================================================
+# РОДОВЫЕ ЛИНИИ
+# ============================================================
+
+def calculate_male_generation_line(
+        top,
+        right
+):
+
+    return [
+
+        reduce_to_22(
+            top + right
+        ),
+
+        reduce_to_22(
+            right * 2
+        )
+    ]
+
+
+def calculate_female_generation_line(
+        left,
+        bottom
+):
+
+    return [
+
+        reduce_to_22(
+            left + bottom
+        ),
+
+        reduce_to_22(
+            left * 2
+        )
+    ]
+
+
+# ============================================================
+# ПРЕДНАЗНАЧЕНИЯ
+# ============================================================
+
+def calculate_spiritual_destination(
+        top,
+        center
+):
+
+    """
+    Духовное предназначение
+    """
+
+    return reduce_to_22(
+        top + center
+    )
+
+
+def calculate_social_destination(
+        left,
+        center
+):
+
+    """
+    Социальное предназначение
+    """
+
+    return reduce_to_22(
+        left + center
+    )
+
+
+def calculate_material_destination(
+        right,
+        center
+):
+
+    """
+    Материальное предназначение
+    """
+
+    return reduce_to_22(
+        right + center
+    )
+
+
+def calculate_main_destination(
+        spiritual,
+        social,
+        material
+):
+
+    """
+    Главное предназначение души
+    """
+
+    return reduce_to_22(
+        spiritual +
+        social +
+        material
+    )
+
+
+# ============================================================
+# ВОЗРАСТНЫЕ АРКАНЫ
+# ============================================================
+
+def calculate_age_arcana_cycle(matrix_points):
+
+    """
+    Внешний круг жизни
+
+    Энергии идут по кругу:
+    верх -> право -> низ -> лево
+    """
+
+    cycle_points = [
+
+        matrix_points["top"],
+        matrix_points["top_right"],
+        matrix_points["right"],
+        matrix_points["bottom_right"],
+        matrix_points["bottom"],
+        matrix_points["bottom_left"],
+        matrix_points["left"],
+        matrix_points["top_left"]
+    ]
+
+    result = {}
+
+    current_age = 0
+    current_index = 0
+
+    while current_age <= 80:
+
+        energy = cycle_points[current_index]
+
+        result[str(current_age)] = energy
+
+        current_age += 1
+
+        current_index += 1
+
+        if current_index >= len(cycle_points):
+
+            current_index = 0
+
+    return result
+
+
+# ============================================================
+# ВСЯ МАТРИЦА
+# ============================================================
 
 def calculate_full_matrix(
         birth_day: int,
@@ -413,19 +433,19 @@ def calculate_full_matrix(
         birth_year: int
 ):
 
-    # =====================================================
-    # ОСНОВНЫЕ ТОЧКИ
-    # =====================================================
+    # ========================================================
+    # БАЗОВЫЕ ЭНЕРГИИ
+    # ========================================================
 
-    top = calculate_top_arcana(
+    top = calculate_day_arcana(
         birth_day
     )
 
-    left = calculate_left_arcana(
+    left = calculate_month_arcana(
         birth_month
     )
 
-    right = calculate_right_arcana(
+    right = calculate_year_arcana(
         birth_year
     )
 
@@ -442,11 +462,11 @@ def calculate_full_matrix(
         bottom
     )
 
-    # =====================================================
-    # ВНУТРЕННИЕ АРКАНЫ
-    # =====================================================
+    # ========================================================
+    # ВНУТРЕННИЙ КВАДРАТ
+    # ========================================================
 
-    inner_arcana = calculate_inner_arcana(
+    inner_square = calculate_inner_square(
         top,
         left,
         right,
@@ -454,21 +474,57 @@ def calculate_full_matrix(
         center
     )
 
-    # =====================================================
-    # ЛИНИИ
-    # =====================================================
+    # ========================================================
+    # ВНЕШНИЙ КВАДРАТ
+    # ========================================================
 
-    money_line = calculate_money_line(
+    outer_square = calculate_outer_square(
+        top,
+        left,
+        right,
+        bottom
+    )
+
+    # ========================================================
+    # ДИАГОНАЛИ
+    # ========================================================
+
+    diagonals = calculate_diagonals(
+        top,
+        left,
+        right,
+        bottom,
+        center
+    )
+
+    # ========================================================
+    # КАНАЛЫ
+    # ========================================================
+
+    money_channel = calculate_money_channel(
         center,
         right,
         bottom
     )
 
-    love_line = calculate_love_line(
+    love_channel = calculate_love_channel(
         center,
         left,
         bottom
     )
+
+    # ========================================================
+    # ВИЗИТКА
+    # ========================================================
+
+    business_card = calculate_business_card(
+        top,
+        left
+    )
+
+    # ========================================================
+    # РОД
+    # ========================================================
 
     male_generation_line = (
         calculate_male_generation_line(
@@ -484,9 +540,9 @@ def calculate_full_matrix(
         )
     )
 
-    # =====================================================
+    # ========================================================
     # КАРМА
-    # =====================================================
+    # ========================================================
 
     karma_tail = calculate_karma_tail(
         top,
@@ -494,77 +550,84 @@ def calculate_full_matrix(
         right
     )
 
-    # =====================================================
-    # ЛИЧНОСТЬ И ДУША
-    # =====================================================
+    # ========================================================
+    # ПРЕДНАЗНАЧЕНИЯ
+    # ========================================================
 
-    personality_arcana = (
-        calculate_personality_arcana(
+    spiritual_destination = (
+        calculate_spiritual_destination(
             top,
-            left
+            center
         )
     )
 
-    soul_arcana = (
-        calculate_soul_arcana(
-            center,
-            top
+    social_destination = (
+        calculate_social_destination(
+            left,
+            center
         )
     )
 
-    # =====================================================
-    # ВНЕШНИЙ КВАДРАТ
-    # =====================================================
-
-    outer_square = calculate_outer_square(
-        top,
-        left,
-        right,
-        bottom
+    material_destination = (
+        calculate_material_destination(
+            right,
+            center
+        )
     )
 
-    # =====================================================
-    # ДИАГОНАЛИ
-    # =====================================================
-
-    diagonals = calculate_diagonals(
-        top,
-        left,
-        right,
-        bottom,
-        center
+    main_destination = (
+        calculate_main_destination(
+            spiritual_destination,
+            social_destination,
+            material_destination
+        )
     )
 
-    # =====================================================
+    # ========================================================
     # ВОЗРАСТНЫЕ АРКАНЫ
-    # =====================================================
+    # ========================================================
 
-    age_arcana = calculate_age_arcana(
-        birth_year
-    )
+    age_arcana = calculate_age_arcana_cycle({
 
-    # =====================================================
+        "top": top,
+
+        "right": right,
+
+        "bottom": bottom,
+
+        "left": left,
+
+        "top_left": outer_square["top_left"],
+
+        "top_right": outer_square["top_right"],
+
+        "bottom_left": outer_square["bottom_left"],
+
+        "bottom_right": outer_square["bottom_right"]
+    })
+
+    # ========================================================
     # DEBUG
-    # =====================================================
+    # ========================================================
 
-    print("===================================")
+    print("================================")
     print("MATRIX CALCULATED")
     print("TOP =", top)
     print("LEFT =", left)
     print("RIGHT =", right)
     print("BOTTOM =", bottom)
     print("CENTER =", center)
-    print("===================================")
+    print("================================")
 
-    # =====================================================
+    # ========================================================
     # ГОТОВАЯ МАТРИЦА
-    # =====================================================
+    # ========================================================
 
     return {
 
-        # =================================================
+        # ====================================================
         # ДАТА
-        # =================================================
+        # ====================================================
 
         "birth_data": {
 
@@ -575,9 +638,9 @@ def calculate_full_matrix(
             "year": birth_year
         },
 
-        # =================================================
-        # ГЛАВНЫЕ АРКАНЫ
-        # =================================================
+        # ====================================================
+        # ОСНОВА
+        # ====================================================
 
         "main_arcana": {
 
@@ -592,29 +655,43 @@ def calculate_full_matrix(
             "center": center
         },
 
-        # =================================================
-        # ВНУТРЕННИЕ АРКАНЫ
-        # =================================================
+        # ====================================================
+        # КВАДРАТЫ
+        # ====================================================
 
-        "inner_arcana": inner_arcana,
-
-        # =================================================
-        # ВНЕШНИЙ КВАДРАТ
-        # =================================================
+        "inner_square": inner_square,
 
         "outer_square": outer_square,
 
-        # =================================================
-        # ЛИНИИ
-        # =================================================
+        # ====================================================
+        # ДИАГОНАЛИ
+        # ====================================================
 
-        "money_line": money_line,
+        "diagonals": diagonals,
 
-        "love_line": love_line,
+        # ====================================================
+        # КАНАЛЫ
+        # ====================================================
 
-        # =================================================
+        "money_channel": money_channel,
+
+        "love_channel": love_channel,
+
+        # ====================================================
+        # ВИЗИТКА
+        # ====================================================
+
+        "business_card": business_card,
+
+        # ====================================================
+        # КАРМА
+        # ====================================================
+
+        "karma_tail": karma_tail,
+
+        # ====================================================
         # РОД
-        # =================================================
+        # ====================================================
 
         "male_generation_line": (
             male_generation_line
@@ -624,33 +701,32 @@ def calculate_full_matrix(
             female_generation_line
         ),
 
-        # =================================================
-        # ДИАГОНАЛИ
-        # =================================================
+        # ====================================================
+        # ПРЕДНАЗНАЧЕНИЯ
+        # ====================================================
 
-        "diagonals": diagonals,
+        "destinations": {
 
-        # =================================================
-        # КАРМА
-        # =================================================
+            "spiritual": (
+                spiritual_destination
+            ),
 
-        "karma_tail": karma_tail,
+            "social": (
+                social_destination
+            ),
 
-        # =================================================
-        # ДОПОЛНИТЕЛЬНО
-        # =================================================
+            "material": (
+                material_destination
+            ),
 
-        "personality_arcana": (
-            personality_arcana
-        ),
+            "main": (
+                main_destination
+            )
+        },
 
-        "soul_arcana": (
-            soul_arcana
-        ),
-
-        # =================================================
-        # ВОЗРАСТНЫЕ ЦИКЛЫ
-        # =================================================
+        # ====================================================
+        # ВОЗРАСТНЫЕ АРКАНЫ
+        # ====================================================
 
         "age_arcana": age_arcana
     }

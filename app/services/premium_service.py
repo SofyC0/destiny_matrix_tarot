@@ -1,61 +1,43 @@
-FREE_TAROT_LIMIT = 5
-
-FREE_AI_LIMIT = 10
-
-
-FREE_ELEMENTS = [
-
-    "center",
-
-    "money_channel",
-
-    "love_channel",
-
-    "year_energies"
-]
+from app.config.premium_config import (
+    FREE_MATRIX_ELEMENTS,
+    PREMIUM_MATRIX_ELEMENTS
+)
 
 
-PREMIUM_ELEMENTS = [
+# =========================================
+# PREMIUM CHECK
+# =========================================
 
-    "karmic_tail",
+def is_premium(user):
 
-    "male_generation_line",
-
-    "female_generation_line",
-
-    "spiritual_destiny",
-
-    "social_destiny",
-
-    "material_destiny"
-]
+    return getattr(user, "is_premium", False)
 
 
-def can_use_ai(user):
+# =========================================
+# ДОСТУП К ЭЛЕМЕНТУ
+# =========================================
 
-    if user.is_premium:
-        return True
-
-    return user.ai_questions_used < FREE_AI_LIMIT
-
-
-def can_use_tarot(user):
-
-    if user.is_premium:
-        return True
-
-    return (
-        user.tarot_spreads_used <
-        FREE_TAROT_LIMIT
-    )
-
-
-def can_access_element(
+def can_access_matrix_element(
         user,
-        element
+        element_name
 ):
 
-    if user.is_premium:
+    # бесплатные
+    if element_name in FREE_MATRIX_ELEMENTS:
         return True
 
-    return element in FREE_ELEMENTS
+    # premium
+    if element_name in PREMIUM_MATRIX_ELEMENTS:
+
+        return is_premium(user)
+
+    return False
+
+
+# =========================================
+# AI ВОПРОСЫ
+# =========================================
+
+def can_ask_ai_question(user):
+
+    return is_premium(user)

@@ -1,6 +1,10 @@
-from pydantic import BaseModel
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
+from typing import Dict, Any
 
+
+# ==========================================
+# REGISTER
+# ==========================================
 
 class UserCreate(BaseModel):
 
@@ -10,12 +14,17 @@ class UserCreate(BaseModel):
 
     password: str
 
+    # дата рождения
     birth_day: int
 
     birth_month: int
 
     birth_year: int
 
+
+# ==========================================
+# LOGIN
+# ==========================================
 
 class UserLogin(BaseModel):
 
@@ -24,16 +33,36 @@ class UserLogin(BaseModel):
     password: str
 
 
-class TarotRequest(BaseModel):
+# ==========================================
+# TOKEN
+# ==========================================
 
-    spread_type: str
+class Token(BaseModel):
+
+    access_token: str
+
+    token_type: str
 
 
-class AIQuestionRequest(BaseModel):
+# ==========================================
+# USER OUT
+# ==========================================
 
-    question: str
+class UserOut(BaseModel):
 
+    id: int
 
-class MatrixElementRequest(BaseModel):
+    email: str
 
-    element_name: str
+    username: str
+
+    birth_day: int
+
+    birth_month: int
+
+    birth_year: int
+
+    matrix_data: Dict[str, Any] | None = None
+
+    class Config:
+        from_attributes = True

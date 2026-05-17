@@ -1,37 +1,47 @@
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
 from app.models import User
 
+from app.api.auth_utils import get_current_user
 
-def get_user_by_email(
-        db: Session,
-        email: str
+router = APIRouter()
+
+
+# ==========================================
+# CURRENT USER
+# ==========================================
+
+@router.get("/me")
+def read_users_me(
+
+        current_user: User = Depends(
+            get_current_user
+        )
 ):
 
-    return db.query(User).filter(
-        User.email == email
-    ).first()
+    return {
+
+        "id": current_user.id,
+
+        "email": current_user.email,
+
+        "username": current_user.username
+    }
 
 
-def get_user_by_username(
-        db: Session,
-        username: str
+# ==========================================
+# USER MATRIX
+# ==========================================
+
+@router.get("/matrix/me")
+def get_my_matrix(
+
+        current_user: User = Depends(
+            get_current_user
+        )
 ):
 
-    return db.query(User).filter(
-        User.username == username
-    ).first()
+    return {
 
-
-def create_user(
-        db: Session,
-        user
-):
-
-    db.add(user)
-
-    db.commit()
-
-    db.refresh(user)
-
-    return user
+        "matrix": current_user.matrix_data
+    }

@@ -1,74 +1,101 @@
-import random
+from app.services.draw_cards import draw_cards
 
-from app.data.tarot_cards import TAROT_CARDS
+from app.services.tarot_ai_service import (
+    generate_tarot_reading
+)
 
 
-def draw_cards(count):
+def tarot_yes_no():
 
-    cards = random.sample(
-        TAROT_CARDS,
-        count
+    cards = draw_cards(3)
+
+    ai_reading = generate_tarot_reading(
+
+        spread_name="Да / Нет",
+
+        cards=[
+            card["name"]
+            for card in cards
+        ]
     )
 
-    result = []
-
-    for card in cards:
-
-        reversed_card = random.choice(
-            [True, False]
-        )
-
-        result.append({
-
-            "name": card["name"],
-
-            "reversed": reversed_card,
-
-            "meaning":
-
-                card["reversed"]
-                if reversed_card
-                else card["upright"]
-        })
-
-    return result
-
-
-def get_daily_card():
-
     return {
-        "spread": "daily_card",
-        "cards": draw_cards(1)
+
+        "spread": "Да / Нет",
+
+        "cards": cards,
+
+        "reading": ai_reading
     }
 
 
-def get_yes_no_reading():
+def tarot_his_thoughts():
+
+    cards = draw_cards(3)
+
+    ai_reading = generate_tarot_reading(
+
+        spread_name="Его мысли обо мне",
+
+        cards=[
+            card["name"]
+            for card in cards
+        ]
+    )
 
     return {
-        "spread": "yes_no",
-        "cards": draw_cards(1)
+
+        "spread": "Его мысли обо мне",
+
+        "cards": cards,
+
+        "reading": ai_reading
     }
 
 
-def get_his_thoughts_reading():
+def tarot_future():
+
+    cards = draw_cards(5)
+
+    ai_reading = generate_tarot_reading(
+
+        spread_name="Что меня ждет",
+
+        cards=[
+            card["name"]
+            for card in cards
+        ]
+    )
 
     return {
-        "spread": "his_thoughts",
-        "cards": draw_cards(3)
+
+        "spread": "Что меня ждет",
+
+        "cards": cards,
+
+        "reading": ai_reading
     }
 
 
-def get_future_reading():
+def tarot_celtic_cross():
+
+    cards = draw_cards(10)
+
+    ai_reading = generate_tarot_reading(
+
+        spread_name="Кельтский крест",
+
+        cards=[
+            card["name"]
+            for card in cards
+        ]
+    )
 
     return {
-        "spread": "future",
-        "cards": draw_cards(3)
-    }
 
+        "spread": "Кельтский крест",
 
-def get_celtic_cross():
+        "cards": cards,
 
-    return {
-        "spread": "celtic_cross",
-        "cards": draw_cards(10)
+        "reading": ai_reading
     }

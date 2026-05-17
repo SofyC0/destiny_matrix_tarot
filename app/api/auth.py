@@ -1,32 +1,24 @@
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-
 from app.models import User
+from app.schemas import UserCreate, UserLogin
 
-from app.schemas import UserCreate
-from app.schemas import UserLogin
-
-from app.users import get_user_by_email
-from app.users import get_user_by_username
-
-from app.routers.auth_utils import (
+from app.api.auth_utils import (
     get_password_hash,
     verify_password,
     create_access_token
 )
 
-from app.services.matrix_service import calculate_matrix
+from app.services.matrix_service import calculate_full_matrix
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["Auth"]
-)
+router = APIRouter()
 
+
+# ==========================================
+# REGISTER
+# ==========================================
 
 @router.post("/register")
 def register(
@@ -34,39 +26,49 @@ def register(
         db: Session = Depends(get_db)
 ):
 
-    existing_email = get_user_by_email(
-        db,
-        user.email
-    )
+    # проверка email
+    existing_email = db.query(User).filter(
+        User.email == user.email
+    ).first()
 
     if existing_email:
-
         raise HTTPException(
             status_code=400,
-            detail="Email already exists"
+            detail="Email already registered"
         )
 
-    existing_username = get_user_by_username(
-        db,
-        user.username
-    )
+    # проверка username
+    existing_username = db.query(User).filter(
+        User.username == user.username
+    ).first()
 
     if existing_username:
-
         raise HTTPException(
             status_code=400,
-            detail="Username already exists"
+            detail="Username already taken"
         )
 
+    # хэш пароля
     hashed_password = get_password_hash(
         user.password[:72]
     )
 
-    matrix_data = calculate_matrix(
-        user.birth_day,
-        user.birth_month,
-        user.birth_year
+    # ==========================================
+    # РАСЧЕТ МАТРИЦЫ
+    # ==========================================
+
+    matrix_data = calculate_full_matrix(
+
+        day=user.birth_day,
+
+        month=user.birth_month,
+
+        year=user.birth_year
     )
+
+    # ==========================================
+    # СОЗДАНИЕ USER
+    # ==========================================
 
     new_user = User(
 
@@ -92,10 +94,14 @@ def register(
     db.refresh(new_user)
 
     return {
-        "message": "User created",
+        "message": "User created successfully",
         "matrix": matrix_data
     }
 
+
+# ==========================================
+# LOGIN
+# ==========================================
 
 @router.post("/login")
 def login(
@@ -103,10 +109,9 @@ def login(
         db: Session = Depends(get_db)
 ):
 
-    db_user = get_user_by_email(
-        db,
-        user.email
-    )
+    db_user = db.query(User).filter(
+        User.email == user.email
+    ).first()
 
     if not db_user:
 
@@ -126,7 +131,7 @@ def login(
         )
 
     access_token = create_access_token(
-        {
+        data={
             "sub": db_user.email
         }
     )

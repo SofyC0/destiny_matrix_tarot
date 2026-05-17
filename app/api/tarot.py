@@ -1,44 +1,115 @@
 from fastapi import APIRouter
 
 from app.services.tarot_service import (
-    get_daily_card,
-    get_yes_no_reading,
-    get_his_thoughts_reading,
-    get_future_reading,
-    get_celtic_cross
+    card_of_the_day,
+    yes_no_spread,
+    thoughts_spread,
+    future_spread,
+    celtic_cross
 )
 
-router = APIRouter(
-    prefix="/tarot",
-    tags=["Tarot"]
+from app.services.tarot_ai_service import (
+    interpret_tarot_spread
 )
 
+router = APIRouter()
 
-@router.get("/daily")
-def daily_card():
 
-    return get_daily_card()
+# =====================================
+# КАРТА ДНЯ
+# =====================================
 
+@router.get("/card-of-day")
+def get_card_of_day():
+
+    spread = card_of_the_day()
+
+    interpretation = interpret_tarot_spread(
+        "Карта дня",
+        spread["cards"]
+    )
+
+    return {
+        "spread": spread,
+        "interpretation": interpretation
+    }
+
+
+# =====================================
+# ДА / НЕТ
+# =====================================
 
 @router.get("/yes-no")
-def yes_no():
+def get_yes_no():
 
-    return get_yes_no_reading()
+    spread = yes_no_spread()
+
+    interpretation = interpret_tarot_spread(
+        "Да Нет",
+        spread["cards"]
+    )
+
+    return {
+        "spread": spread,
+        "interpretation": interpretation
+    }
 
 
-@router.get("/his-thoughts")
-def his_thoughts():
+# =====================================
+# ЕГО МЫСЛИ
+# =====================================
 
-    return get_his_thoughts_reading()
+@router.get("/thoughts")
+def get_thoughts():
 
+    spread = thoughts_spread()
+
+    interpretation = interpret_tarot_spread(
+        "Его мысли обо мне",
+        spread["cards"]
+    )
+
+    return {
+        "spread": spread,
+        "interpretation": interpretation
+    }
+
+
+# =====================================
+# ЧТО МЕНЯ ЖДЕТ
+# =====================================
 
 @router.get("/future")
-def future():
+def get_future():
 
-    return get_future_reading()
+    spread = future_spread()
 
+    interpretation = interpret_tarot_spread(
+        "Что меня ждет",
+        spread["cards"]
+    )
+
+    return {
+        "spread": spread,
+        "interpretation": interpretation
+    }
+
+
+# =====================================
+# КЕЛЬТСКИЙ КРЕСТ
+# =====================================
 
 @router.get("/celtic-cross")
-def celtic_cross():
+def get_celtic_cross():
 
-    return get_celtic_cross()
+    spread = celtic_cross()
+
+    interpretation = interpret_tarot_spread(
+        "Кельтский крест",
+        spread["cards"]
+    )
+
+    return {
+        "spread": spread,
+        "interpretation": interpretation
+    }

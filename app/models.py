@@ -1,65 +1,56 @@
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import Boolean
-from sqlalchemy import JSON
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    JSON,
+    DateTime,
+    Boolean
+)
+
+from sqlalchemy.sql import func
 
 from app.database import Base
-
 
 class User(Base):
 
     __tablename__ = "users"
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
+    id = Column(Integer, primary_key=True, index=True)
 
-    email = Column(
-        String,
-        unique=True,
-        index=True
-    )
+    email = Column(String, unique=True, index=True)
 
-    username = Column(
-        String,
-        unique=True,
-        index=True
-    )
+    username = Column(String, unique=True, index=True)
 
-    hashed_password = Column(
-        String
-    )
+    hashed_password = Column(String)
 
-    birth_day = Column(
-        Integer
-    )
+    # дата рождения
+    birth_day = Column(Integer)
 
-    birth_month = Column(
-        Integer
-    )
+    birth_month = Column(Integer)
 
-    birth_year = Column(
-        Integer
-    )
+    birth_year = Column(Integer)
 
-    matrix_data = Column(
-        JSON
-    )
+    # матрица
+    matrix_data = Column(JSON)
 
-    is_premium = Column(
-        Boolean,
-        default=False
-    )
 
-    tarot_spreads_used = Column(
-        Integer,
-        default=0
-    )
+class CalculationHistory(Base):
+    __tablename__ = "calculation_history"
 
-    ai_questions_used = Column(
-        Integer,
-        default=0
-    )
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True, nullable=False)
+    calculation_type = Column(String(50))  # 'matrix' или 'tarot'
+    input_data = Column(JSON)  # Входные данные (дата рождения, вопрос и т.д.)
+    result_data = Column(JSON)  # Результат расчёта
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class SessionToken(Base):
+    __tablename__ = "session_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True, nullable=False)
+    token = Column(String(500), unique=True, index=True)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_revoked = Column(Boolean, default=False)
