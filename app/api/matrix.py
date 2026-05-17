@@ -1,14 +1,39 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.api.auth_utils import get_current_user
-from app.models import User
+from app.services.matrix_service import (
+    calculate_matrix,
+    build_matrix_geometry
+)
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/matrix",
+    tags=["Matrix"]
+)
 
 
-@router.get("/me")
-def get_my_matrix(current_user: User = Depends(get_current_user)):
+@router.get("/{day}/{month}/{year}")
+def get_matrix(
+        day: int,
+        month: int,
+        year: int
+):
 
-    return {
-        "matrix": current_user.user_data.get("matrix", {})
-    }
+    return calculate_matrix(
+        day,
+        month,
+        year
+    )
+
+
+@router.get("/geometry/{day}/{month}/{year}")
+def get_geometry(
+        day: int,
+        month: int,
+        year: int
+):
+
+    return build_matrix_geometry(
+        day,
+        month,
+        year
+    )
