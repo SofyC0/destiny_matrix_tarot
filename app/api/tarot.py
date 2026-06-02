@@ -3,19 +3,19 @@ from fastapi import HTTPException
 
 from app.services.tarot_service import (
 
-    card_of_the_day,
+    tarot_daily_card,
 
-    yes_no_spread,
+    tarot_yes_no,
 
-    thoughts_spread,
+    tarot_his_thoughts,
 
-    future_spread,
+    tarot_future,
 
-    celtic_cross
+    tarot_celtic_cross
 )
 
 from app.services.tarot_ai_service import (
-    interpret_tarot_spread
+    generate_tarot_reading
 )
 
 from app.config.premium_config import (
@@ -41,7 +41,7 @@ def build_tarot_response(
     Единый формат tarot response
     """
 
-    interpretation = interpret_tarot_spread(
+    interpretation = generate_tarot_reading(
 
         spread_name,
 
@@ -105,7 +105,7 @@ def get_card_of_day():
         "daily_card"
     )
 
-    spread = card_of_the_day()
+    spread = tarot_daily_card()
 
     return build_tarot_response(
 
@@ -126,7 +126,7 @@ def get_yes_no():
         "yes_no"
     )
 
-    spread = yes_no_spread()
+    spread = tarot_yes_no()
 
     return build_tarot_response(
 
@@ -147,7 +147,7 @@ def get_thoughts():
         "his_thoughts"
     )
 
-    spread = thoughts_spread()
+    spread = tarot_his_thoughts()
 
     return build_tarot_response(
 
@@ -168,7 +168,7 @@ def get_future():
         "future"
     )
 
-    spread = future_spread()
+    spread = tarot_future()
 
     return build_tarot_response(
 
@@ -189,7 +189,7 @@ def get_celtic_cross():
         "celtic_cross"
     )
 
-    spread = celtic_cross()
+    spread = tarot_celtic_cross()
 
     return build_tarot_response(
 

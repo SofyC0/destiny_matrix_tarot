@@ -30,7 +30,7 @@ from app.api.auth_utils import (
 )
 
 from app.services.matrix_service import (
-    calculate_full_matrix
+    calculate_matrix
 )
 
 
@@ -138,7 +138,7 @@ def register(
     # MATRIX CALCULATION
     # ==========================================
 
-    matrix_data = calculate_full_matrix(
+    matrix_data = calculate_matrix(
 
         day=user.birth_day,
 

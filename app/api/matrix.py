@@ -24,23 +24,14 @@ from app.services.matrix_geometry_service import (
 )
 
 from app.services.matrix_interpreter import (
-
     interpret_center,
-
     interpret_business_card,
-
     interpret_money_channel,
-
     interpret_love_channel,
-
-    interpret_destinations,
-
+    interpret_destinies,
     interpret_generation_lines,
-
-    interpret_karma_tail,
-
-    interpret_age_arcana,
-
+    interpret_karmic_tail,
+    interpret_age_circle,
     generate_full_matrix_reading
 )
 
@@ -286,7 +277,7 @@ def get_destinations(
     return {
 
         "interpretation": (
-            interpret_destinations(
+            interpret_destinies(
                 matrix
             )
         )
@@ -352,7 +343,7 @@ def get_karma_tail(
     return {
 
         "interpretation": (
-            interpret_karma_tail(
+            interpret_karmic_tail(
                 matrix
             )
         )
@@ -386,7 +377,7 @@ def get_age_arcana(
         current_user
     )
 
-    result = interpret_age_arcana(
+    result = interpret_age_circle(
 
         matrix,
         age
