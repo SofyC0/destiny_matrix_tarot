@@ -1,0 +1,111 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#05071b;
+    color:white;
+    font-family:"Segoe UI",sans-serif;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:24px;
+}
+
+.header{
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+    margin-bottom:30px;
+}
+
+.back-btn{
+    width:45px;
+    height:45px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border-radius:50%;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:#101936;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.question-block,
+.cards-section,
+.interpretation{
+    background:#101936;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+}
+
+.question-block h2,
+.cards-section h2,
+.interpretation h2{
+    margin-bottom:15px;
+}
+
+.question-block p,
+.interpretation p{
+    color:#a0a4c0;
+    line-height:1.7;
+}
+
+.cards{
+    display:flex;
+    gap:15px;
+
+    flex-wrap:wrap;
+}
+
+.tarot-card{
+    flex:1;
+
+    min-width:120px;
+
+    height:180px;
+
+    background:linear-gradient(
+        145deg,
+        #4f2c92,
+        #2a1e58
+    );
+
+    border-radius:18px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.tarot-card:hover{
+    transform:translateY(-5px);
+}
+
+.tarot-card span{
+    font-size:50px;
+    margin-bottom:10px;
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карты Таро</title>
+    <link rel="stylesheet" href="../static/css/tarot.css">
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+    <h2>🔮 Меню</h2>
+
+    <a href="./index.html">Главная</a>
+    <a href="./matrix.html">Матрица судьбы</a>
+    <a href="./history.html">История</a>
+    <a href="#">Справочник</a>
+    <a href="#">Настройки</a>
+
+</aside>
+
+<div class="container">
+
+    <header class="header">
+
+    <button class="burger" id="burger">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+    <div class="profile">
+        <span>👤</span>
+    </div>
+
+</header>
+
+    <section class="hero">
+        <h1>Карты Таро</h1>
+        <p>Задай вопрос или выбери расклад 🔮</p>
+    </section>
+
+    <section class="card-of-day">
+        <div class="badge">Карта дня</div>
+
+        <img
+            src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=500"
+            alt="Карта Таро"
+        >
+
+        <h2>Солнце</h2>
+
+        <p>
+            Сегодня благоприятный день для новых
+            возможностей и позитивных перемен.
+        </p>
+
+        <button>Подробнее</button>
+    </section>
+
+    <section class="section-title">
+        <h3>Популярные расклады</h3>
+    </section>
+
+    <section class="layouts">
+
+        <div class="layout-card">
+            <div class="icon">🃏</div>
+            <h4>Одна карта</h4>
+            <p>Быстрый ответ на вопрос</p>
+            <button
+                class="spread-btn"
+                data-title="Одна карта"
+                data-description="Быстрый ответ на вопрос с помощью одной карты."
+                data-cards="1">
+                Выбрать
+            </button>
+        </div>
+
+        <div class="layout-card">
+            <div class="icon">🃏🃏🃏</div>
+            <h4>Три карты</h4>
+            <p>Прошлое, настоящее и будущее</p>
+            <button
+                class="spread-btn"
+                data-title="Три карты"
+                data-description="Расклад показывает прошлое, настоящее и будущее."
+                data-cards="3">
+                Выбрать
+            </button>
+        </div>
+
+        <div class="layout-card">
+            <div class="icon">❤️</div>
+            <h4>Любовь</h4>
+            <p>Отношения и чувства</p>
+            <button
+                class="spread-btn"
+                data-title="Любовный расклад"
+                data-description="Помогает разобраться в отношениях."
+                data-cards="3">
+                Выбрать
+            </button>
+        </div>
+
+        <div class="layout-card">
+            <div class="icon">💼</div>
+            <h4>Карьера</h4>
+            <p>Работа и финансы</p>
+            <button
+    class="spread-btn"
+    data-title="Карьерный расклад"
+    data-description="Помогает оценить работу, финансы и развитие карьеры."
+>
+    Выбрать
+</button>
+        </div>
+
+    </section>
+
+    <section class="question">
+        <h3>Ваш вопрос</h3>
+
+        <textarea
+            placeholder="Введите вопрос для расклада..."
+        ></textarea>
+
+<button class="spread-start-btn startSpread">
+    Начать расклад
+</button>
+    </section>
+
+    <section class="history">
+
+        <div class="history-header">
+            <h3>История</h3>
+            <a href="./history.html">Смотреть все</a>
+        </div>
+
+        <div class="history-item">
+            <span>🃏</span>
+            <div>
+                <h4>Три карты</h4>
+                <p>20.05.2026</p>
+            </div>
+        </div>
+
+        <div class="history-item">
+            <span>❤️</span>
+            <div>
+                <h4>Любовный расклад</h4>
+                <p>18.05.2026</p>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+<nav class="bottom-nav">
+    <a href="#">🏠</a>
+    <a href="#" class="active">🃏</a>
+    <a href="#">📚</a>
+    <a href="#">👤</a>
+</nav>
+
+<div class="modal-overlay" id="modalOverlay">
+
+    <div class="modal">
+
+        <button class="modal-close" id="closeModal">
+            ✕
+        </button>
+
+        <div class="modal-card">
+
+            <img
+                src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=500"
+                alt="Солнце"
+            >
+
+        </div>
+
+        <h2>☀️ Солнце</h2>
+
+        <p>
+            Карта Солнце символизирует успех, радость,
+            энергию и уверенность в себе. Она говорит о том,
+            что наступает период ясности и благоприятных
+            возможностей.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="spread-modal-overlay" id="spreadModal">
+
+    <div class="spread-modal">
+
+        <button class="spread-close" id="spreadClose">
+            ✕
+        </button>
+
+        <h2 id="spreadTitle"></h2>
+
+        <p id="spreadDescription"></p>
+
+<button class="spread-start-btn startSpread">
+    Начать расклад
+</button>
+
+    </div>
+
+</div>
+
+<script src="../static/js/tarot.js"></script>
+
+</body>
+</html>

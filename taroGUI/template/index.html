@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Таро и Матрица Судьбы</title>
+<link rel="stylesheet" href="../static/css/reset.css">
+<link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+    <h2>🔮 Меню</h2>
+
+    <a href="#">Главная</a>
+    <a href="./tarot.html">Карты Таро</a>
+    <a href="./matrix.html">Матрица судьбы</a>
+    <a href="./history.html">История</a>
+    <a href="#">Справочник</a>
+    <a href="#">Настройки</a>
+
+</aside>
+
+<div class="app">
+
+    <header class="header">
+
+        <button class="burger" id="burger">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+        <div class="profile-btn">
+            👤
+        </div>
+
+    </header>
+
+    <section class="greeting">
+
+        <h1>Привет!</h1>
+
+        <p>
+            Выбери раздел, с которым хочешь
+            сегодня поработать 🔮
+        </p>
+
+    </section>
+
+    <section class="cards">
+
+        <div class="card tarot">
+
+            <h2>Карты Таро</h2>
+
+            <p>
+                Узнай ответ на свой вопрос
+                с помощью карт Таро
+            </p>
+
+            <div class="card-image">
+                🃏
+            </div>
+
+            <button onclick="window.location.href='./tarot.html'">
+                Перейти
+            </button>
+
+        </div>
+
+        <div class="card matrix">
+
+            <h2>Матрица судьбы</h2>
+
+            <p>
+                Рассчитай свою матрицу
+                и узнай больше о себе
+            </p>
+
+            <div class="card-image">
+                ✨
+            </div>
+
+            <button onclick="window.location.href='./matrix.html'">
+                Перейти
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="history">
+
+        <div class="history-header">
+
+            <h2>История</h2>
+
+            <a href="./history.html">Смотреть все</a>
+
+        </div>
+
+        <div class="history-item">
+
+            <div class="history-icon">🃏</div>
+
+            <div>
+
+                <h3>Карта дня</h3>
+
+                <p>Солнце</p>
+
+                <span>20.05.2024 10:30</span>
+
+            </div>
+
+        </div>
+
+        <div class="history-item">
+
+            <div class="history-icon">✨</div>
+
+            <div>
+
+                <h3>Матрица судьбы</h3>
+
+                <span>20.05.2024 09:15</span>
+
+            </div>
+
+        </div>
+
+        <div class="tip-card">
+
+            <div class="tip-icon">
+                ✦
+            </div>
+
+            <div>
+
+                <h3>Совет дня</h3>
+
+                <p>
+                    Доверяй себе и вселенной.
+                    Всё идёт так, как должно.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<nav class="bottom-nav">
+
+    <a href="#" class="active">
+        🏠
+        <span>Главная</span>
+    </a>
+
+    <a href="#">
+        🃏
+        <span>Расклады</span>
+    </a>
+
+    <a href="#">
+        📖
+        <span>Справочник</span>
+    </a>
+
+</nav>
+
+<script src="../static/js/index.js"></script>
+
+</body>
+</html>

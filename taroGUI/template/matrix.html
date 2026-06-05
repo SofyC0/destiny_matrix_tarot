@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матрица Судьбы</title>
+
+    <link rel="stylesheet" href="../static/css/matrix.css">
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+    <h2>🔮 Меню</h2>
+
+    <a href="./index.html">Главная</a>
+    <a href="./tarot.html">Карты Таро</a>
+    <a href="./history.html">История</a>
+    <a href="#">Справочник</a>
+    <a href="#">Настройки</a>
+
+</aside>
+
+<div class="container">
+
+    <header class="header">
+
+        <button class="burger" id="burger">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+        <div class="profile-btn">
+            👤
+        </div>
+
+    </header>
+
+    <section class="hero">
+
+        <h1>Матрица Судьбы ✨</h1>
+
+        <p>
+            Рассчитай свою матрицу и узнай
+            сильные стороны, таланты и предназначение
+        </p>
+
+    </section>
+
+    <section class="calculator-card">
+
+        <h2>Дата рождения</h2>
+
+        <input
+            type="date"
+            class="date-input"
+        >
+
+        <button class="calculate-btn">
+            Рассчитать матрицу
+        </button>
+
+    </section>
+
+    <section class="result-card">
+
+        <div class="main-number">
+            7
+        </div>
+
+        <h2>Главное число</h2>
+
+        <p>
+            Символизирует мудрость,
+            глубокое мышление и интуицию.
+        </p>
+
+    </section>
+
+    <section class="matrix-card">
+
+        <h2>Ваша матрица</h2>
+
+        <div class="matrix-grid">
+
+            <div class="cell">3</div>
+
+            <div class="cell">6</div>
+            <div class="cell">9</div>
+
+            <div class="cell">1</div>
+            <div class="cell active">7</div>
+            <div class="cell">5</div>
+
+            <div class="cell">4</div>
+            <div class="cell">8</div>
+
+            <div class="cell">2</div>
+
+        </div>
+
+    </section>
+
+    <section class="description">
+
+        <div class="info-card">
+
+            <h3>✨ Предназначение</h3>
+
+            <p>
+                Развитие знаний,
+                анализ и помощь людям.
+            </p>
+
+        </div>
+
+        <div class="info-card">
+
+            <h3>💰 Финансы</h3>
+
+            <p>
+                Доход приходит через
+                профессионализм и опыт.
+            </p>
+
+        </div>
+
+        <div class="info-card">
+
+            <h3>❤️ Отношения</h3>
+
+            <p>
+                Важны доверие,
+                честность и взаимопонимание.
+            </p>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="../static/js/matrix.js"></script>
+
+</body>
+</html>
